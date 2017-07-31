@@ -19,11 +19,11 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.oauth.OAuthService;
 
-@WebServlet(urlPatterns = { "/OAuthCallback" }, asyncSupported = true)
-public class OAuthCallback extends HttpServlet
+@WebServlet(urlPatterns = { "/redirect" }, asyncSupported = true)
+public class Redirect extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
-	private static final String PROTECTED_RESOURCE_URL = "https://www.googleapis.com/plus/v1/people/me";
+	private static final String protectedResourceUrl = "https://www.googleapis.com/plus/v1/people/me";
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response)
@@ -37,21 +37,22 @@ public class OAuthCallback extends HttpServlet
 
 		HttpSession session = request.getSession();
 				
-		OAuth20Service service=(OAuth20Service) session.getAttribute("service");
+		OAuth20Service authUrl=(OAuth20Service) session.getAttribute("authUrl");
 
+		//try puttign it inside try block
 		OAuth2AccessToken accessToken = null;
 
 		try
 		{
-			accessToken = service.getAccessToken(code);
+			accessToken = authUrl.getAccessToken(code);
 
 			System.out.println("accessToken - " + accessToken+"\n");
 
 			final OAuthRequest authRequest = new OAuthRequest(Verb.GET,
-					PROTECTED_RESOURCE_URL);
-			service.signRequest(accessToken, authRequest);
+					protectedResourceUrl);
+			authUrl.signRequest(accessToken, authRequest);
 
-			final Response response2 = service.execute(authRequest);
+			final Response response2 = authUrl.execute(authRequest);
 
 			System.out.println();
 			System.out.println("response code - "+response2.getCode());

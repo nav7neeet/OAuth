@@ -19,8 +19,8 @@ import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.oauth.OAuthService;
 
-@WebServlet("/oauth")
-public class OAuth extends HttpServlet {
+@WebServlet("/home")
+public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,12 +28,13 @@ public class OAuth extends HttpServlet {
 		
 		final String cliendId = "984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com";
 		final String clientSecret = "ZZ70ScMw5xikMTozcTLUxMM6";
-		final String callback = "http://127.0.0.1:8080/OAuth/OAuthCallback";
+		final String redirectUri = "http://127.0.0.1:8080/OAuth/redirect";
 		final String scope = "https://www.googleapis.com/auth/plus.login";
 		final String secretState = "secret" + new Random().nextInt(999_999);
 
-		OAuth20Service service = new ServiceBuilder().apiKey(cliendId).apiSecret(clientSecret).scope(scope)
-				.state(secretState).callback(callback).build(GoogleApi20.instance());
+		//Prepare authorization url
+		OAuth20Service authUrl = new ServiceBuilder().apiKey(cliendId).apiSecret(clientSecret).scope(scope)
+				.state(secretState).callback(redirectUri).build(GoogleApi20.instance());
 
 		System.out.println("=== Test OAuth ===");
 		System.out.println();
@@ -45,13 +46,16 @@ public class OAuth extends HttpServlet {
 
 		// Obtain the Authorization URL
 		System.out.println("Fetching the Authorization URL...");
-		String authorizationUrl = service.getAuthorizationUrl(additionalParams);
+		String authorizationUrl = authUrl.getAuthorizationUrl(additionalParams);
 
 		System.out.println(authorizationUrl + "\n");
 
 		HttpSession session = request.getSession();
-		session.setAttribute("service", service);
+		session.setAttribute("authUrl", authUrl);
+		
+		String hardCodedValue = "https://accounts.google.com/o/oauth2/auth?access_type=offline&prompt=consent&response_type=code&client_id=984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2FOAuth%2FOAuthRedirect&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login&state=secret898652";
 		response.sendRedirect(authorizationUrl);
+//		response.sendRedirect(authorizationUrl);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
