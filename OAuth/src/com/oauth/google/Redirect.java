@@ -3,6 +3,7 @@ package com.oauth.google;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +24,7 @@ import com.github.scribejava.core.oauth.OAuthService;
 public class Redirect extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
-	private static final String protectedResourceUrl = "https://www.googleapis.com/plus/v1/people/me";
+	private static final String protectedResourceUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response)
@@ -57,6 +58,12 @@ public class Redirect extends HttpServlet
 			System.out.println();
 			System.out.println("response code - "+response2.getCode());
 			System.out.println("response body \n"+response2.getBody());
+			
+			request.setAttribute("jsonResponse", response2.getBody());
+			RequestDispatcher rd = request
+					.getRequestDispatcher("/WEB-INF/index.jsp");
+			rd.forward(request, response);
+			
 		}
 		catch (Exception e)
 		{

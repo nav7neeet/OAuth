@@ -28,8 +28,11 @@ public class Home extends HttpServlet {
 		
 		final String cliendId = "984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com";
 		final String clientSecret = "ZZ70ScMw5xikMTozcTLUxMM6";
+		//final String cliendId = "299469286864-ecjotn9dteehv4ieoi9c9srhiaaf63bf.apps.googleusercontent.com";
+		//final String clientSecret = "r3af3DBM1ZgBNQsLhiaZm6Pu";
+
 		final String redirectUri = "http://127.0.0.1:8080/OAuth/redirect";
-		final String scope = "https://www.googleapis.com/auth/plus.login";
+		final String scope = "https://www.googleapis.com/auth/userinfo.email";
 		final String secretState = "secret" + new Random().nextInt(999_999);
 
 		//Prepare authorization url
@@ -53,8 +56,8 @@ public class Home extends HttpServlet {
 		HttpSession session = request.getSession();
 		session.setAttribute("authUrl", authUrl);
 		
-		String hardCodedValue = "https://accounts.google.com/o/oauth2/auth?access_type=offline&prompt=consent&response_type=code&client_id=984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2FOAuth%2FOAuthRedirect&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login&state=secret898652";
-		response.sendRedirect(authorizationUrl);
+		String hardCodedValue = "https://accounts.google.com/o/oauth2/auth?access_type=offline&prompt=consent&response_type=code&client_id=984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2FOAuth%2Fredirect&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login&state=secret999565";
+		response.sendRedirect(hardCodedValue);
 //		response.sendRedirect(authorizationUrl);
 	}
 
