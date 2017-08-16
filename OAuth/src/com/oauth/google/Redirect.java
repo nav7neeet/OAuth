@@ -23,59 +23,56 @@ import com.github.scribejava.core.oauth.OAuthService;
 @WebServlet(urlPatterns = { "/redirect" }, asyncSupported = true)
 public class Redirect extends HttpServlet
 {
-	private static final long serialVersionUID = 1L;
-	private static final String protectedResourceUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
+	private static final String resourceUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response)
 			throws ServletException, IOException
 	{
-		System.out.println("=== in the call back servlet ===");
-
+		System.out.println("=== in the redirect page ===");
 		String code = request.getParameter("code");
-
 		System.out.println("code - " + code+"\n");
 
-		HttpSession session = request.getSession();
+		// Check if the user has given authorization. Code parameter will not be null.
+		if (code != null)
+		{
+			HttpSession session = request.getSession();
+			OAuth20Service authUrl=(OAuth20Service) session.getAttribute("authUrl");
+			
+			try
+			{
+				// Get the access token by sending code in the request
+				OAuth2AccessToken accessToken = authUrl.getAccessToken(code);
+				System.out.println("accessToken - " + accessToken+"\n");
+	
+				// Sign the request using access token
+				final OAuthRequest authRequest = new OAuthRequest(Verb.GET, resourceUrl);
+				authUrl.signRequest(accessToken, authRequest);
 				
-		OAuth20Service authUrl=(OAuth20Service) session.getAttribute("authUrl");
-
-		//try puttign it inside try block
-		OAuth2AccessToken accessToken = null;
-
-		try
-		{
-			accessToken = authUrl.getAccessToken(code);
-
-			System.out.println("accessToken - " + accessToken+"\n");
-
-			final OAuthRequest authRequest = new OAuthRequest(Verb.GET,
-					protectedResourceUrl);
-			authUrl.signRequest(accessToken, authRequest);
-
-			final Response response2 = authUrl.execute(authRequest);
-
-			System.out.println();
-			System.out.println("response code - "+response2.getCode());
-			System.out.println("response body \n"+response2.getBody());
-			
-			request.setAttribute("jsonResponse", response2.getBody());
-			RequestDispatcher rd = request
-					.getRequestDispatcher("/WEB-INF/index.jsp");
-			rd.forward(request, response);
-			
+				//Get user information
+				final Response userInformation = authUrl.execute(authRequest);
+				System.out.println("response code - "+userInformation.getCode());
+				System.out.println("response body \n"+userInformation.getBody());
+				
+				request.setAttribute("userInformation", userInformation.getBody());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
-		catch (Exception e)
+		else
 		{
-			e.printStackTrace();
+			request.setAttribute("userInformation", "{}");
 		}
+		RequestDispatcher rd = request
+				.getRequestDispatcher("/WEB-INF/index.jsp");
+		rd.forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response)
-			throws ServletException, IOException
+			HttpServletResponse response) throws ServletException,
+			IOException
 	{
-		System.out.println("post call back");
 	}
-
 }

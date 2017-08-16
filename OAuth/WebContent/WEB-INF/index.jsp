@@ -6,9 +6,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <script type="text/javascript">
-var json = ${requestScope.jsonResponse};
-	if ("kind" in json)
-		document.write(json["name"]["givenName"]);
+	var userInformation = ${requestScope.userInformation}
+	
+	if (Object.keys(userInformation).length!==0)
+	{
+		document.write("User has authorized to access his account information. Details below - <br>");
+		if ("name" in userInformation)
+			document.write("name - "+userInformation["name"]+"<br>");
+		if ("email" in userInformation)
+			document.write("email - "+userInformation["email"]);
+	}
+	else
+	{
+		document.write("User has not authorized to access his account information.");
+	}
 </script>
 </head>
 <body>

@@ -28,37 +28,27 @@ public class Home extends HttpServlet {
 		
 		final String cliendId = "984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com";
 		final String clientSecret = "ZZ70ScMw5xikMTozcTLUxMM6";
-		//final String cliendId = "299469286864-ecjotn9dteehv4ieoi9c9srhiaaf63bf.apps.googleusercontent.com";
-		//final String clientSecret = "r3af3DBM1ZgBNQsLhiaZm6Pu";
-
 		final String redirectUri = "http://127.0.0.1:8080/OAuth/redirect";
-		final String scope = "https://www.googleapis.com/auth/userinfo.email";
+		final String scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.login";
 		final String secretState = "secret" + new Random().nextInt(999_999);
 
-		//Prepare authorization url
+		//Construct Google authorization URL
 		OAuth20Service authUrl = new ServiceBuilder().apiKey(cliendId).apiSecret(clientSecret).scope(scope)
 				.state(secretState).callback(redirectUri).build(GoogleApi20.instance());
 
-		System.out.println("=== Test OAuth ===");
-		System.out.println();
-
-		// Adding additional params
+		// Add additional params
 		final Map<String, String> additionalParams = new HashMap<>();
 		additionalParams.put("access_type", "offline");
 		additionalParams.put("prompt", "consent");
 
-		// Obtain the Authorization URL
-		System.out.println("Fetching the Authorization URL...");
+		// Obtain authorization URL
 		String authorizationUrl = authUrl.getAuthorizationUrl(additionalParams);
+		System.out.println("Authorization Url - "+authorizationUrl + "\n");
 
-		System.out.println(authorizationUrl + "\n");
-
+		//	Add authUrl to session variable to be used in Redirect.java
 		HttpSession session = request.getSession();
 		session.setAttribute("authUrl", authUrl);
-		
-		String hardCodedValue = "https://accounts.google.com/o/oauth2/auth?access_type=offline&prompt=consent&response_type=code&client_id=984169855535-rmsfbv11ikina3hrb3n85h0nt93hdb2t.apps.googleusercontent.com&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2FOAuth%2Fredirect&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login&state=secret999565";
-		response.sendRedirect(hardCodedValue);
-//		response.sendRedirect(authorizationUrl);
+		response.sendRedirect(authorizationUrl);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
