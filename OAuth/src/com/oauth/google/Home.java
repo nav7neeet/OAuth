@@ -21,7 +21,6 @@ import com.github.scribejava.core.oauth.OAuthService;
 
 @WebServlet("/home")
 public class Home extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -30,13 +29,13 @@ public class Home extends HttpServlet {
 		final String clientSecret = "ZZ70ScMw5xikMTozcTLUxMM6";
 		final String redirectUri = "http://127.0.0.1:8080/OAuth/redirect";
 		final String scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/plus.login";
-		final String secretState = "secret" + new Random().nextInt(999_999);
+		final String secretState = Double.toString(Math.random());
 
 		//Construct Google authorization URL
 		OAuth20Service authUrl = new ServiceBuilder().apiKey(cliendId).apiSecret(clientSecret).scope(scope)
 				.state(secretState).callback(redirectUri).build(GoogleApi20.instance());
 
-		// Add additional params
+		// Add additional parameters
 		final Map<String, String> additionalParams = new HashMap<>();
 		additionalParams.put("access_type", "offline");
 		additionalParams.put("prompt", "consent");

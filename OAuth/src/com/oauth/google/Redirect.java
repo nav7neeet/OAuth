@@ -55,6 +55,7 @@ public class Redirect extends HttpServlet
 				System.out.println("response body \n"+userInformation.getBody());
 				
 				request.setAttribute("userInformation", userInformation.getBody());
+				request.setAttribute("responseCode", userInformation.getCode());
 			}
 			catch (Exception e)
 			{
@@ -64,6 +65,7 @@ public class Redirect extends HttpServlet
 		else
 		{
 			request.setAttribute("userInformation", "{}");
+			request.setAttribute("responseCode", "000");
 		}
 		RequestDispatcher rd = request
 				.getRequestDispatcher("/WEB-INF/index.jsp");

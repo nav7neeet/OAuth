@@ -6,9 +6,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <script type="text/javascript">
+	var responseCode=${requestScope.responseCode}
 	var userInformation = ${requestScope.userInformation}
 	
-	if (Object.keys(userInformation).length!==0)
+	if (Object.keys(userInformation).length!==0 && responseCode===200)
 	{
 		document.write("User has authorized to access his account information. Details below - <br>");
 		if ("name" in userInformation)
@@ -18,7 +19,7 @@
 	}
 	else
 	{
-		document.write("User has not authorized to access his account information.");
+		document.write("User has not authorized to access his account information or some other problem occured");
 	}
 </script>
 </head>
